@@ -49,7 +49,7 @@ class Reserve():
             self.__save()
 
     def __notify(self, boss):
-        trig = (boss == 0)  # 被动触发
+        trig = (boss == "0")  # 被动触发
         if trig:  # 查找boss号
             with open(os.path.join(self.__path, "conf.json"), "r", encoding="utf-8") as f:
                 conf = json.load(f)

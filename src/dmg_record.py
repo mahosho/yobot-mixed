@@ -44,14 +44,12 @@ class Record():
             with open(os.path.join(self.__path, "mailconf.json"), "w", encoding="utf-8") as f:
                 initmailconf = {
                     "sender": {
-                        "host": "unknown",
+                        "host": "smtp.163.com",
                         "user": "unknown",
                         "pswd": "unknown",
                         "sender": "unknown"},
                     "subscriber": {}}
                 json.dump(initmailconf, f, ensure_ascii=False, indent=2)
-        else:
-            self.__conf = {}
         if not(self.__groupid in self.__conf.keys()):
             self.__conf[self.__groupid] = {
                 "area": "unknown",
@@ -405,11 +403,11 @@ class Record():
         self.txt_list.extend(r.txt_list)
 
     @staticmethod
-    def match(cmd):
+    def match(incmd):
         """
         匹配命令，返回触发功能的序号
         """
-        cmd = cmd.replace(" ", "")
+        cmd = incmd.replace(" ", "")
         if cmd.startswith("报刀"):  # 历史遗留问题
             cmd = cmd[2:]
         if re.match(r"\d+[wWkK万]?$", cmd):

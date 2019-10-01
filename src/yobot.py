@@ -34,7 +34,7 @@ def yobot(*cmd_list):
                 return txt_list  # 后面不再运行
         func = Reserve.match(cmd_list[3])
         if func != 0:
-            rsv = Reserve(cmd_list1:3])
+            rsv = Reserve(cmd_list[:3])
             rsv.rsv(cmd_list[3], func)
             txt_list.extend(rsv.txt_list)
             return txt_list  # 后面不再运行
@@ -44,5 +44,5 @@ def yobot(*cmd_list):
 
 
 if __name__ == "__main__":
-    txtlist = yobot(*sys.argv[1:4])  # 获得输出文本的list
+    txtlist = yobot(*sys.argv[1:])  # 获得输出文本的list
     print("\n".join(txtlist))  # 随便怎么用，这里直接连接并输出

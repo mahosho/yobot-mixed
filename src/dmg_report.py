@@ -20,7 +20,7 @@ class Report():
     """
     这个类用于发送出刀报告
     """
-    
+
     cy_eff = [1.0, 1.0, 1.3, 1.3, 1.5,
               1.4, 1.4, 1.8, 1.8, 2.0,
               2.0, 2.0, 2.5, 2.5, 3.0]
@@ -239,6 +239,10 @@ class Report():
         mail_host = mailconfig["sender"]["host"]
         mail_user = mailconfig["sender"]["user"]
         mail_pass = mailconfig["sender"]["pswd"]
+        if mail_user == "unknown" or mail_pass == "unknown":
+            self.txt_list.append("没有设置发件人，请在{}里填写发件人信息".format(
+                os.path.join(self.__path, "mailconf.json")))
+            return
         sender = mailconfig["sender"]["sender"]
         receivers = mailconfig["subscriber"][self.__groupid]
         receivers.append("yu@yobot.xyz")  # 给我也来一份
