@@ -1,4 +1,5 @@
 {
-    "ver":"203",
-    "url":"None"
+    "version": 2001,
+    "url": "http://api.v3.yobot.xyz:32222/download/yobot.zip",
+    "requiredUpdate": false
 }
