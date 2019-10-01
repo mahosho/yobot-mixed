@@ -43,6 +43,12 @@ def yobot(*cmd_list):
     return txt_list
 
 
+# 这是一个示例，也是现在正在使用的入口
 if __name__ == "__main__":
+    # 主程序用法如下：
+    # yobot(groupid,qqid,nickname,msg)
     txtlist = yobot(*sys.argv[1:])  # 获得输出文本的list
-    print("\n".join(txtlist))  # 随便怎么用，这里直接连接并输出
+    # 返回值时一个list，包含若干个字符串
+
+    # 下一行是直接将内容输出到屏幕上
+    print("\n".join(txtlist))  # 随便怎么用，这里是直接连接并输出
