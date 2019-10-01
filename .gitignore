@@ -1,3 +1,4 @@
-*.json
+/src/*.json
+/src/__pycache__
 /src/data
 /src/report
