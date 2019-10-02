@@ -6,7 +6,7 @@ from dmg_record import Record
 from lock_boss import Lock
 from reserve import Reserve
 from yobot_msg import Message
-from update import Update
+from check_ver import Check
 
 
 def yobot(*cmd_list):
@@ -14,7 +14,7 @@ def yobot(*cmd_list):
     if len(cmd_list) != 4:
         txt_list.append("100参数错误")
     else:
-        u = Update()
+        u = Check()
         if cmd_list[3] == "更新":
             txt_list.append(u.update())
             return txt_list  # 后面不再运行

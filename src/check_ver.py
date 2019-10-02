@@ -8,7 +8,7 @@ import time
 import requests
 
 
-class Update():
+class Check():
 
     def __init__(self):
         self.__path = os.path.dirname(sys.argv[0])
@@ -20,15 +20,19 @@ class Update():
             try:
                 ver = json.load(f)
             except json.decoder.JSONDecodeError:
-                ver = {"checktime": 0, "localver": 2000}
+                ver = {"checktime": 0, "localver": 2000,
+                       "url": "https://yuudi.github.io/yobot/ver.json"}
+                f.seek(0)
+                f.truncate()
+                json.dump(ver, f, indent=2)
         else:
             f = open(os.path.join(self.__path, "version.json"),
                      "w", encoding="utf-8")
-            ver = {"checktime": 0, "localver": 2000}
+            ver = {"checktime": 0, "localver": 2000,
+                   "url": "https://yuudi.github.io/yobot/ver.json"}
         now = int(time.time())
         if ver["checktime"] < now:  # 到检查时间
-            url = 'https://yuudi.github.io/yobot/ver.json'
-            response = requests.get(url)
+            response = requests.get(ver["url"])
             if response.status_code != 200:  # 网页返回错误
                 f.close()
                 return None
@@ -48,9 +52,9 @@ class Update():
             return None
 
     def update(self):
-        app = os.path.join(self.__path, "UpdateApp", "UpdateApp.exe")
+        app = os.path.join(self.__path, "updater.exe")
         if os.path.exists(app):
             os.system("start "+app)
-            return "更新程序已被唤醒，请在机器人的主机上继续操作"
+            return "更新程序已开始"
         else:
             return "更新程序丢失"
