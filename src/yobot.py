@@ -17,7 +17,7 @@ def yobot(*cmd_list):
         u = Update()
         if cmd_list[3] == "更新":
             txt_list.append(u.update())
-            return  # 后面不再运行
+            return txt_list  # 后面不再运行
         r = u.check()
         if r != None:
             txt_list.append(r)
