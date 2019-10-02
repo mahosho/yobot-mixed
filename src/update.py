@@ -47,8 +47,10 @@ class Update():
             f.close()
             return None
 
-    # def update(self):
-    #     if os.path.exists(os.path.join(self.__path, "UpdateApp", "UpdateApp.exe")):
-    #         return "方式错误，此方式不应当由本程序发起"
-    #     else:
-    #         return "更新程序丢失"
+    def update(self):
+        app = os.path.join(self.__path, "UpdateApp", "UpdateApp.exe")
+        if os.path.exists(app):
+            os.system("start "+app)
+            return "更新程序已被唤醒，请在机器人的主机上继续操作"
+        else:
+            return "更新程序丢失"
