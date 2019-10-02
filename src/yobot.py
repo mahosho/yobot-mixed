@@ -15,9 +15,12 @@ def yobot(*cmd_list):
         txt_list.append("100参数错误")
     else:
         u = Update()
+        if cmd_list[3] == "更新":
+            txt_list.append(u.update())
+            return  # 后面不再运行
         r = u.check()
         if r != None:
-            text.append(r)
+            txt_list.append(r)
         del u
         func = Message.match(cmd_list[3])
         if func != 0:
