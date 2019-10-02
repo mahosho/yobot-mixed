@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<root>
-  <version remark="最新版本号">2.1.0.0</version>
-  <url remark="最新版本包">http://api.v3.yobot.xyz:32222/download/yobot204.zip</url>
-  <requiredUpdate remark="是否必须更新">false</requiredUpdate>
-</root>
