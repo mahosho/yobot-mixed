@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <root>
   <version>2.0.0.0</version>
-  <url>https://yuudi.github.io/yobot/ver.xml</url>
+  <url>http://api.yobot.xyz/ver.xml</url>
   <appName>yobot</appName>
   <killList></killList>
 </root>
