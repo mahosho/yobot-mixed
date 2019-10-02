@@ -31,13 +31,24 @@ class Check():
             ver = {"checktime": 0, "localver": 2000,
                    "url": "https://yuudi.github.io/yobot/ver.json"}
         now = int(time.time())
-        if ver["checktime"] < now:  # 到检查时间
+        if ver["checktime"] == 1:  # 已经发现新版本
+            f.close()
+            return "有新的版本可用，发送“#更新”唤起更新程序"
+        elif ver["checktime"] < now:  # 到检查时间
             response = requests.get(ver["url"])
             if response.status_code != 200:  # 网页返回错误
+                ver["checktime"] = now + 80000  # 下次再检查
+                f.seek(0)
+                f.truncate()
+                json.dump(ver, f, indent=2)
                 f.close()
                 return None
             latest = json.loads(response.text)
             if latest["version"] > ver["localver"]:
+                ver["checktime"] = 1  # 已经发现新版本
+                f.seek(0)
+                f.truncate()
+                json.dump(ver, f, indent=2)
                 f.close()
                 return "有新的版本可用，发送“#更新”唤起更新程序"
             else:
