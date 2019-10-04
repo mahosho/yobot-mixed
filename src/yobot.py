@@ -45,7 +45,7 @@ def yobot(*cmd_list):
         func = Lock.match(cmd)
         if func != 0:
             lockboss = Lock(cmd_list[:3])
-            lockboss.lockboss(cmd, func)
+            lockboss.lockboss(cmd, func, comment=cmt)
             txt_list.extend(lockboss.txt_list)
             return txt_list
         # 记录伤害
