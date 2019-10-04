@@ -261,7 +261,7 @@ class Report():
             return
         sender = mailconfig["sender"]["sender"]
         receivers = mailconfig["subscriber"][self.__groupid]
-        receivers.append("yu@yobot.xyz")  # 给我也来一份
+        receivers.append(self.mailaddr)
         message = MIMEMultipart()
         mail_text = MIMEText("公会战的统计报告已生成，详见附件", "plain", "utf-8")
         message.attach(mail_text)
@@ -391,6 +391,7 @@ class Report():
         self.__rpt["proportion"] = self._proportion(
             self.__rpt["yb_sorce"], self.__rpt["cy_sorce"])
         self.__rpt["count"] = self._count(mem_data)
+        self.mailaddr = "yu@yobot.xyz"
         table, count = self._gen_table(mem_data)
         self._gen_report(table=table, count=count)
         self._zip_report()
