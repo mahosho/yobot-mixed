@@ -44,22 +44,26 @@ class Consult():
         data = requests.get("http://api.yobot.xyz/jjc_search?def=" + query)
         res = json.loads(data.text)
         if(res["code"] == 0):
-            self.txt_list.append("找到{}条记录".format(len(res["data"]["result"])))
+            self.txt_list.append("从pcrdfans.com找到{}条记录".format(
+                len(res["data"]["result"])))
+            line = "======="
             for result in res["data"]["result"]:
+                self.txt_list.append(line)
+                line = "-------"
                 text = ""
                 for atker in result["atk"]:
                     text += self.number[atker["id"]]
                     if atker["equip"] or atker["star"]:
                         cmt = ""
                         if atker["star"]:
-                            cmt += str(atker["star"])+"星"
+                            cmt += str(atker["star"])
                         if atker["equip"]:
                             cmt += "专"
                         text += "("+cmt+")"
                     text += " "
                 text += "({},{}赞{}踩)；".format(
-                    result["updated"]
-                    [2:10], result["up"],
+                    result["updated"][2:10],
+                    result["up"],
                     result["down"])
                 self.txt_list.append(text)
         else:
