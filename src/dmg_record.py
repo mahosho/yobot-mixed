@@ -140,7 +140,7 @@ class Record():
                 if self.__qqid == "unknown":
                     self.__comment += "未记录"
                     return
-            if self.__data[1][self.__qqid][0] == self.__qqid:
+            if self.__nickname != self.__qqid:
                 self.__data[1][self.__qqid][0] = self.__nickname
             now = int(time.time())
             self.__conf[self.__groupid]["remain"] = remain - dmg
