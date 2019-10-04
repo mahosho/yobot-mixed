@@ -28,7 +28,7 @@ class Consult():
         if len(in_list) > 5:
             return "error: more than 5"
         for index in in_list:
-            item = self.nickname.get(index, "error")
+            item = self.nickname.get(index.lower(), "error")
             if item == "error":
                 return "error: "+index+" not found"
             self.def_lst.append(item)
