@@ -33,6 +33,14 @@ def yobot(*cmd_list):
         if func != 0:
             txt_list.append(Message.msg(func))
             return txt_list
+        # jjc查询
+        if cmd_list[3].startswith("jjc查询"):
+            c = Consult()
+            r = c.user_input(cmd_list[3][5:])
+            if r == 0:
+                c.jjcsearch()
+            txt_list.extend(c.txt_list)
+            return txt_list
         # 锁定boss
         func = Lock.match(cmd_list[3])
         if func != 0:
