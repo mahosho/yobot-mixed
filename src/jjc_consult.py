@@ -9,13 +9,14 @@ import requests
 
 class Consult():
     def __init__(self):
-        path=sys.arg[0]
+        path = sys.arg[0]
         self.nickname = {}
         self.number = {}
         self.def_lst = []
         nickfile = os.path.join(path, "nickname.csv")
+        self.txt_list = []
         if not os.path.exists(nickfile):
-            print("nickname.csv文件不存在")
+            self.txt_list.append("nickname.csv文件不存在")
         with open(nickfile, encoding="utf-8-sig")as f:
             f_csv = csv.reader(f)
             for row in f_csv:
@@ -37,13 +38,12 @@ class Consult():
     def jjcsearch(self):
         query = ".".join(self.def_lst)
         data = requests.get("http://api.yobot.xyz/jjc_search?def=" + query)
-        print(data.text)
+        self.txt_list.append(data.text)
         res = json.loads(data.text)
-        text = ""
         if(res["code"] == 0):
-            text += "找到{}条记录".format(len(res["data"]["result"]))
+            self.txt_list.append("找到{}条记录".format(len(res["data"]["result"])))
             for result in res["data"]["result"]:
-                text += "\n"
+                text = ""
                 for atker in result["atk"]:
                     text += self.number[atker["id"]]
                     if atker["equip"] or atker["star"]:
@@ -58,8 +58,9 @@ class Consult():
                     result["updated"]
                     [2:10], result["up"],
                     result["down"])
+                self.txt_list.append(text)
         else:
-            text = "error code: {}\nmessage : {}".format(
+            text = "error code: {}, message : {}".format(
                 res["code"], res["message"])
         return text
 
@@ -67,12 +68,12 @@ class Consult():
 if __name__ == "__main__":
     # cus_list = user_input(["布丁", "kkr", "镜子", "448"], nickname)
     # if isinstance(cus_list, str):
-    #     print(cus_list)
+    #     self.txt_list.append(cus_list)
     # else:
     #     result = jjcsearch(cus_list, number)
-    #     print(result)
+    #     self.txt_list.append(result)
     c = Consult(r"E:\tangmt\Documents\工作台\programming\yobot_2")
     r = c.user_input("布丁 水子龙 448 水魅魔")
     if r == "":
         r = c.jjcsearch()
-    print(r)
+    self.txt_list.append(r)
