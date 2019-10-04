@@ -3,13 +3,15 @@
 import csv
 import json
 import os
+import sys
 import time
+
 import requests
 
 
 class Consult():
     def __init__(self):
-        path = sys.arg[0]
+        path = os.path.dirname(sys.argv[0])
         self.nickname = {}
         self.number = {}
         self.def_lst = []
@@ -40,7 +42,6 @@ class Consult():
     def jjcsearch(self):
         query = ".".join(self.def_lst)
         data = requests.get("http://api.yobot.xyz/jjc_search?def=" + query)
-        self.txt_list.append(data.text)
         res = json.loads(data.text)
         if(res["code"] == 0):
             self.txt_list.append("找到{}条记录".format(len(res["data"]["result"])))
