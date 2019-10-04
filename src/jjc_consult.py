@@ -64,17 +64,3 @@ class Consult():
         else:
             text = "error code: {}, message : {}".format(
                 res["code"], res["message"])
-
-
-if __name__ == "__main__":
-    # cus_list = user_input(["布丁", "kkr", "镜子", "448"], nickname)
-    # if isinstance(cus_list, str):
-    #     self.txt_list.append(cus_list)
-    # else:
-    #     result = jjcsearch(cus_list, number)
-    #     self.txt_list.append(result)
-    c = Consult(r"E:\tangmt\Documents\工作台\programming\yobot_2")
-    r = c.user_input("布丁 水子龙 448 水魅魔")
-    if r == "":
-        r = c.jjcsearch()
-    self.txt_list.append(r)
