@@ -27,13 +27,15 @@ class Consult():
     def user_input(self, cmd):
         in_list = cmd.split()
         if len(in_list) > 5:
-            return "error: more than 5"
+            self.txt_list.append("error: more than 5")
+            return 5
         for index in in_list:
             item = self.nickname.get(index.lower(), "error")
             if item == "error":
-                return "error: "+index+" not found"
+                self.txt_list.append("error: "+index+" not found")
+                return 1
             self.def_lst.append(item)
-        return ""
+        return 0
 
     def jjcsearch(self):
         query = ".".join(self.def_lst)
@@ -62,7 +64,6 @@ class Consult():
         else:
             text = "error code: {}, message : {}".format(
                 res["code"], res["message"])
-        return text
 
 
 if __name__ == "__main__":
