@@ -129,7 +129,7 @@ class Record():
                     cmd,
                     self.__comment))
 
-    def __damage(self, cmd, comment == None):
+    def __damage(self, cmd, comment = None):
         dmg = self._cmdtoint(cmd)
         remain = self.__conf[self.__groupid]["remain"]
         if(dmg >= remain):
@@ -175,7 +175,7 @@ class Record():
             self.__comment += "已记录"
             self._boss_status()
 
-    def __eliminate(self, comment == None):
+    def __eliminate(self, comment = None):
         if not (self.__qqid in self.__data[1].keys()):
             self.__creat_mem()
             if self.__qqid == "unknown":
