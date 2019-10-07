@@ -17,7 +17,9 @@ def yobot(*cmd_list):
     else:
         cmd = cmd_list[3].split("//", 1)
         cmt = None
-        if len(cmd) == 2:
+        if len(cmd) == 1:
+            cmd = cmd[0]
+        else:
             cmd, cmt = cmd
         # 检查更新
         u = Check()
