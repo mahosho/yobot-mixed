@@ -4,6 +4,7 @@ import pickle
 import random
 import sqlite3
 import sys
+import time
 
 import json5
 import requests
@@ -68,7 +69,6 @@ class Gacha():
             db.execute(
                 '''CREATE TABLE Colle(
                 qqid INT PRIMARY KEY,
-                nickname TEXT,
                 colle BLOB,
                 times SMALLINT)''')
         sql_info = list(db.execute(
@@ -99,8 +99,8 @@ class Gacha():
             db.execute("UPDATE Colle SET colle=?, times=? WHERE qqid=?",
                        (sql_info, times, self.__qqid))
         else:
-            db.execute("INSERT INTO Colle (qqid,nickname,colle,times) VALUES(?,?,?,?)",
-                       (self.__qqid, self.__nickname, sql_info, times))
+            db.execute("INSERT INTO Colle (qqid,colle,times) VALUES(?,?,?,?)",
+                       (self.__qqid, sql_info, times))
         db_conn.commit()
         db_conn.close()
 
