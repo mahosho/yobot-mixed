@@ -70,39 +70,56 @@ class Gacha():
                 '''CREATE TABLE Colle(
                 qqid INT PRIMARY KEY,
                 colle BLOB,
-                times SMALLINT)''')
+                times SMALLINT,
+                last_day CHARACTER(4),
+                day_times TINYINT)''')
+        today = time.strftime("%m%d")
         sql_info = list(db.execute(
-            "SELECT colle, times FROM Colle WHERE qqid=?", (self.__qqid,)))
+            "SELECT colle,times,last_day,day_times FROM Colle WHERE qqid=?", (self.__qqid,)))
         mem_exists = (len(sql_info) == 1)
         if mem_exists:
             info = pickle.loads(sql_info[0][0])
-            times = sql_info[0][1]
+            times, last_day, day_times = sql_info[0][1:]
         else:
             info = {}
-            times = 0
+            times, last_day, day_times = 0, "", 0
         try:
-            result = self.result()
+            day_limit = self.__pool["settings"]["每日抽卡次数"]
         except:
             self.txt_list.append("卡池信息错误")
             return 1
-        times += 1
-        self.txt_list.append("{}第{}抽：".format(self.__nickname, times))
-        for char in result:
-            if char in info:
-                info[char] += 1
-                self.txt_list.append("{}({})".format(char, info[char]))
-            else:
-                info[char] = 1
-                self.txt_list.append("{}(new)".format(char))
-        sql_info = pickle.dumps(info)
-        if mem_exists:
-            db.execute("UPDATE Colle SET colle=?, times=? WHERE qqid=?",
-                       (sql_info, times, self.__qqid))
+        if today != last_day:
+            last_day = today
+            day_times = 0
+        if day_limit != 0 and day_times >= day_limit:
+            self.txt_list.append("你今天已经抽了{}次了，明天再来吧".format(day_times))
+            return 2
         else:
-            db.execute("INSERT INTO Colle (qqid,colle,times) VALUES(?,?,?,?)",
-                       (self.__qqid, sql_info, times))
+            try:
+                result = self.result()
+            except:
+                self.txt_list.append("卡池信息错误")
+                return 1
+            times += 1
+            day_times += 1
+            self.txt_list.append("{}第{}抽：".format(self.__nickname, times))
+            for char in result:
+                if char in info:
+                    info[char] += 1
+                    self.txt_list.append("{}({})".format(char, info[char]))
+                else:
+                    info[char] = 1
+                    self.txt_list.append("{}(new)".format(char))
+            sql_info = pickle.dumps(info)
+            if mem_exists:
+                db.execute("UPDATE Colle SET colle=?, times=? WHERE qqid=?",
+                           (sql_info, times, self.__qqid))
+            else:
+                db.execute("INSERT INTO Colle (qqid,colle,times,last_day,day_times) VALUES(?,?,?,?,?)",
+                           (self.__qqid, sql_info, times, last_day, day_times))
         db_conn.commit()
         db_conn.close()
+        return 0
 
 
 if __name__ == "__main__":
