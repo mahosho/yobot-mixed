@@ -122,7 +122,7 @@ class Gacha():
 
     def setting(self):
         if os.path.exists(os.path.join(self.__path, "pool.json5")):
-            os.system("notepad " + os.path.join(
+            os.system("start notepad " + os.path.join(
                 os.path.join(self.__path, "pool.json5")))
             self.txt_list.append("请在本机的运行电脑上修改卡池，修改完毕后保存即可")
         else:
@@ -138,7 +138,7 @@ class Gacha():
             return 0
 
     def gc(self, func_num):
-        if g.load() == 0:
+        if self.load() == 0:
             if func_num == 1:
                 self.gacha()
             elif func_num == 2:

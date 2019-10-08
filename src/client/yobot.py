@@ -41,7 +41,7 @@ def yobot(*cmd_list):
         if func != 0:
             gacha = Gacha(cmd_list[:3])
             gacha.gc(func)
-            txt_list.extend(g.txt_list)
+            txt_list.extend(gacha.txt_list)
         # jjc查询
         if cmd.startswith("jjc查询"):
             c = Consult()
