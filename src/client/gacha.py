@@ -19,10 +19,10 @@ class Gacha():
         self.__nickname = baseinfo[2]
         self.__path = os.path.dirname(sys.argv[0])
         self.txt_list = []
-        if not os.path.exists(os.path.join(self.__path, "pool.json")):
+        if not os.path.exists(os.path.join(self.__path, "pool.json5")):
             res = requests.get(self.URL)
             assert res.status_code == 200, "服务器不可用"
-            with open(os.path.join(self.__path, "pool.json"), "w", encoding="utf-8") as f:
+            with open(os.path.join(self.__path, "pool.json5"), "w", encoding="utf-8") as f:
                 f.write(res.text)
             try:
                 self.__data = json5.loads(res.text)
@@ -31,7 +31,7 @@ class Gacha():
                 print(res.text)
                 exit()
         else:
-            with open(os.path.join(self.__path, "pool.json"), "r", encoding="utf-8") as f:
+            with open(os.path.join(self.__path, "pool.json5"), "r", encoding="utf-8") as f:
                 self.__data = json5.load(f)
 
     def __del__(self):

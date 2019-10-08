@@ -1,4 +1,5 @@
 /src/client/*.json
+/src/client/*.json5
 /src/client/__pycache__
 /src/client/data
 /src/client/report
