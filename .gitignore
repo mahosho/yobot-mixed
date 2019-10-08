@@ -1,7 +1,3 @@
-/src/client/*.json
-/src/client/*.json5
-/src/client/__pycache__
-/src/client/data
-/src/client/report
-/src/client/temp
-/src/client/*.csv
+/src/client
+!/src/client/*.py
+!/src/client/*.md
