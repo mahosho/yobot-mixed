@@ -143,10 +143,3 @@ class Gacha():
                 self.gacha()
             elif func_num == 2:
                 self.setting()
-
-
-if __name__ == "__main__":
-    g = Gacha(["111", "12347", "ppoo9"])
-    if g.load() == 0:
-        g.gacha()
-    print("\n".join(g.txt_list))
