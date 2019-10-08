@@ -30,14 +30,30 @@ class Gacha():
             with open(os.path.join(self.__path, "pool.json5"), "w", encoding="utf-8") as f:
                 f.write(res.text)
             try:
-                self.__data = json5.loads(res.text)
+                self.__pool = json5.loads(res.text)
             except:
                 self.txt_list.append("服务器响应错误")
                 return 1
         else:
             with open(os.path.join(self.__path, "pool.json5"), "r", encoding="utf-8") as f:
                 try:
-                    self.__data = json5.load(f)
+                    self.__pool = json5.load(f)
                 except:
-                    self.txt_list("卡池文件解析错误，请检查卡池文件语法，或者删除卡池文件")
+                    self.txt_list.append("卡池文件解析错误，请检查卡池文件语法，或者删除卡池文件")
                     return 2
+        return 0
+
+    def gacha(self):
+        db_exists = os.path.exists(os.path.join(self.__path, "collections.db"))
+        db_conn = sqlite3.connect(os.path.join(self.__path, "collections.db"))
+        db=db_conn.cursor()
+        if not db_exists:
+            db.execute(
+                '''CREAT TABLE Colle(
+                qqid INT PRIMARY KEY
+                nickname TEXT
+                colle BLOB
+                times SMALLINT)''')
+        # todo
+        db_conn.commit()
+        db_conn.close()
