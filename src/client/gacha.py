@@ -1,5 +1,6 @@
 # coding=utf-8
 import os.path
+import pickle
 import random
 import sqlite3
 import sys
@@ -15,8 +16,7 @@ class Gacha():
         """
         baseinfo=[群号，QQ号, 群名片]（字符串）
         """
-        self.__groupid = baseinfo[0]
-        self.__qqid = baseinfo[1]
+        self.__qqid = int(baseinfo[1])
         self.__nickname = baseinfo[2]
         self.__path = os.path.dirname(sys.argv[0])
         self.txt_list = []
@@ -49,12 +49,13 @@ class Gacha():
         result_list = []
         for p in self.__pool["pool"].values():
             prop += p["prop"]
-        resu = random.random() * prop
-        for _ in range(10):
-            resu_i = resu
+        for i in range(10):
+            resu = random.random() * prop
             for p in self.__pool["pool"].values():
-                resu_i -= p["prop"]
-                if resu_i < 0:
+                resu -= p["prop"]
+                if resu < 0:
+                    if i == 9 and p.get("guarantee", None) != None:
+                        p = self.__pool["pool"][p["guarantee"]]
                     result_list.append(p["prefix"]+random.choice(p["pool"]))
                     break
         return result_list
@@ -65,11 +66,47 @@ class Gacha():
         db = db_conn.cursor()
         if not db_exists:
             db.execute(
-                '''CREAT TABLE Colle(
-                qqid INT PRIMARY KEY
-                nickname TEXT
-                colle BLOB
+                '''CREATE TABLE Colle(
+                qqid INT PRIMARY KEY,
+                nickname TEXT,
+                colle BLOB,
                 times SMALLINT)''')
-        # todo
+        sql_info = list(db.execute(
+            "SELECT colle, times FROM Colle WHERE qqid=?", (self.__qqid,)))
+        mem_exists = (len(sql_info) == 1)
+        if mem_exists:
+            info = pickle.loads(sql_info[0][0])
+            times = sql_info[0][1]
+        else:
+            info = {}
+            times = 0
+        try:
+            result = self.result()
+        except:
+            self.txt_list.append("卡池信息错误")
+            return 1
+        times += 1
+        self.txt_list.append("{}第{}抽：".format(self.__nickname, times))
+        for char in result:
+            if char in info:
+                info[char] += 1
+                self.txt_list.append("{}({})".format(char, info[char]))
+            else:
+                info[char] = 1
+                self.txt_list.append("{}(new)".format(char))
+        sql_info = pickle.dumps(info)
+        if mem_exists:
+            db.execute("UPDATE Colle SET colle=?, times=? WHERE qqid=?",
+                       (sql_info, times, self.__qqid))
+        else:
+            db.execute("INSERT INTO Colle (qqid,nickname,colle,times) VALUES(?,?,?,?)",
+                       (self.__qqid, self.__nickname, sql_info, times))
         db_conn.commit()
         db_conn.close()
+
+
+if __name__ == "__main__":
+    g = Gacha(["111", "12346", "ppoo"])
+    if g.load() == 0:
+        g.gacha()
+    print("\n".join(g.txt_list))
