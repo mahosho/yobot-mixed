@@ -1,5 +1,5 @@
 # coding=utf-8
-import json
+import json5
 import os.path
 import sqlite3
 import sys
@@ -8,7 +8,7 @@ import requests
 
 
 class Gacha():
-    URL = "http://api.yobot.xyz/v2/pool/?type=json"
+    URL = "http://api.yobot.xyz/v2/pool/?type=json5"
 
     def __init__(self, baseinfo):
         """
@@ -19,18 +19,20 @@ class Gacha():
         self.__nickname = baseinfo[2]
         self.__path = os.path.dirname(sys.argv[0])
         self.txt_list = []
-        if os.path.exists(os.path.join(self.__path, "pool.json")):
-            with open(os.path.join(self.__path, "pool.json"), "r", encoding="utf-8") as f:
-                self.__data = json.load(f)
-        else:
+        if not os.path.exists(os.path.join(self.__path, "pool.json")):
             res = requests.get(self.URL)
             assert res.status_code == 200, "服务器不可用"
+            with open(os.path.join(self.__path, "pool.json"), "w", encoding="utf-8") as f:
+                f.write(res.text)
             try:
-                self.__data = json.loads(res.text)
+                self.__data = json5.loads(res.text)
             except:
                 print("服务器响应错误")
                 print(res.text)
                 exit()
+        else:
+            with open(os.path.join(self.__path, "pool.json"), "r", encoding="utf-8") as f:
+                self.__data = json5.load(f)
 
     def __del__(self):
         pass
