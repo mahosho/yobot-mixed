@@ -1,7 +1,6 @@
-/src/*.json
-/src/__pycache__
-/src/data
-/src/report
-/src/temp
-/src/*.csv
-LICENSE
+/src/client/*.json
+/src/client/__pycache__
+/src/client/data
+/src/client/report
+/src/client/temp
+/src/client/*.csv
