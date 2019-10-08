@@ -28,7 +28,8 @@ class Gacha():
             try:
                 self.__data = json.loads(res.text)
             except:
-                print("服务器错误")
+                print("服务器响应错误")
+                print(res.text)
                 exit()
 
     def __del__(self):
