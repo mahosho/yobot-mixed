@@ -23,7 +23,7 @@ class Gacha():
             with open(os.path.join(self.__path, "pool.json"), "r", encoding="utf-8") as f:
                 self.__data = json.load(f)
         else:
-            res = requests.get(URL)
+            res = requests.get(self.URL)
             assert res.status_code == 200, "服务器不可用"
             try:
                 self.__data = json.loads(res.text)
