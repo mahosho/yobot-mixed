@@ -1,5 +1,5 @@
 # coding=utf-8
-import os.path
+import os
 import pickle
 import random
 import sqlite3
@@ -119,6 +119,30 @@ class Gacha():
         db_conn.commit()
         db_conn.close()
         return 0
+
+    def setting(self):
+        if os.path.exists(os.path.join(self.__path, "pool.json5")):
+            os.system("notepad " + os.path.join(
+                os.path.join(self.__path, "pool.json5")))
+            self.txt_list.append("请在本机的运行电脑上修改卡池，修改完毕后保存即可")
+        else:
+            self.txt_list.append("卡池文件丢失，下次抽卡时重新下载")
+
+    @staticmethod
+    def match(cmd):
+        if cmd == "十连" or cmd == "十连抽":
+            return 1
+        elif cmd == "十连设置" or cmd == "抽卡设置" or cmd == "卡池设置":
+            return 2
+        else:
+            return 0
+
+    def gc(self, func_num):
+        if g.load() == 0:
+            if func_num == 1:
+                self.gacha()
+            elif func_num == 2:
+                self.setting()
 
 
 if __name__ == "__main__":
