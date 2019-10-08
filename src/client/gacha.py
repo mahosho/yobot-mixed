@@ -19,6 +19,11 @@ class Gacha():
         self.__nickname = baseinfo[2]
         self.__path = os.path.dirname(sys.argv[0])
         self.txt_list = []
+
+    def __del__(self):
+        pass
+
+    def load(self):
         if not os.path.exists(os.path.join(self.__path, "pool.json5")):
             res = requests.get(self.URL)
             assert res.status_code == 200, "服务器不可用"
@@ -27,12 +32,12 @@ class Gacha():
             try:
                 self.__data = json5.loads(res.text)
             except:
-                print("服务器响应错误")
-                print(res.text)
-                exit()
+                self.txt_list.append("服务器响应错误")
+                return 1
         else:
             with open(os.path.join(self.__path, "pool.json5"), "r", encoding="utf-8") as f:
-                self.__data = json5.load(f)
-
-    def __del__(self):
-        pass
+                try:
+                    self.__data = json5.load(f)
+                except:
+                    self.txt_list("卡池文件解析错误，请检查卡池文件语法，或者删除卡池文件")
+                    return 2
