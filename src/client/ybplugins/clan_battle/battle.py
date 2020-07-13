@@ -449,12 +449,12 @@ class ClanBattle:
 
         nik = user.nickname or user.qqid
         if defeat:
-            msg = '{}对boss造成了{:,}点伤害，击败了boss\n（今日第{}刀，{}）'.format(
-                nik, health_before, finished+1, '尾余刀' if is_continue else '收尾刀'
+            msg = '{}对boss造成了{:,}点伤害，击败了boss{}\n（今日第{}刀，{}）'.format(
+                nik, health_before,'\n(就这？伤害还不到50万，不会吧不会吧？)\n[CQ:image,file=jiuzhe2.jpg]' if health_before <500000 else '\n(会长，我们工会要没了！)\n[CQ:image,file=cancan.jpg]' if health_before > 1500000 else '', finished+1, '尾余刀' if is_continue else '收尾刀'
             )
         else:
             msg = '{}对boss造成了{:,}点伤害{}\n（今日第{}刀，{}）'.format(
-                nik, damage, '\n(就这？伤害还不到50万，不会吧不会吧？)' if damage <500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
+                nik, damage, '\n(就这？伤害还不到50万，不会吧不会吧？)\n[CQ:image,file=jiuzhe2.jpg]' if damage <500000 else '\n(会长，我们工会要没了！)\n[CQ:image,file=cancan.jpg]' if damage > 1500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
             )
         status = BossStatus(
             group.boss_cycle,

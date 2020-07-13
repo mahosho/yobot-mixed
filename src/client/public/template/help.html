@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <head>
-    <title>功能表</title>
+    <title>真琴使用手册</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" Content="机器人功能指令说明">
     <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/github-markdown-css/3.0.1/github-markdown.min.css">
@@ -19,15 +19,36 @@
                 padding: 15px;
             }
         }
-
+        @media only screen and (max-width: 600px) {
+            body {
+                    background-repeat:no-repeat;
+                    background-size:cover auto;
+                    background-attachment: fixed;
+                    background-position:center 0%;
+                    width: 100%;
+            }
+        }
+        @media only screen and (min-width: 600px) {
+            body {
+                    background-repeat:no-repeat;
+                    background-size: cover;
+                    width: 100%;
+            }
+        }
         .footnote {
             color: red;
         }
     </style>
 </head>
-
-<body class="markdown-body">
-    <h1>功能列表</h1>
+<body class="markdown-body" background="http://yobot.zialy.xyz/back1.jpg">
+    <h1>真琴功能列表目录</h1>
+    <div align="center">
+        <img src="http://yobot.zialy.xyz/kanban1.jpg"  alt="看板" />
+    </div>
+    <p><a href="#">yobot功能列表</a></p>
+    <p><a href="/yobot/help2">hoshinobot功能列表</a></p>
+    <p><a href="/yobot/help3">额外功能列表</a></p>
+    <h1>yobot功能列表</h1>
     <p>此页指令不需要at机器人</p>
     <p>(权)标记表示功能需要权限 </p>
     <p>(自动)标记表示无需触发词，机器人主动推送 </p>

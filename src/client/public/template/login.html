@@ -19,7 +19,22 @@
             flex-flow: column;
             max-width: 400px;
         }
-
+        @media only screen and (max-width: 600px) {
+            body {
+                    background-repeat:no-repeat;
+                    background-size:cover auto;
+                    background-attachment: fixed;
+                    background-position:center 10%;
+                    width: 100%;
+            }
+        }
+        @media only screen and (min-width: 600px) {
+            body {
+                    background-repeat:no-repeat;
+                    background-size: cover;
+                    width: 100%;
+            }
+        }
         .comment {
             color: #aaa;
             line-height: 20px;
@@ -29,7 +44,7 @@
     </style>
 </head>
 
-<body>
+<body background="http://yobot.zialy.xyz/background.jpg">
 <div id="app" class="container">
     <div class="container">
         <h1>登录</h1>
@@ -128,4 +143,11 @@
     })
 </script>
 </body>
+<footer>
+    <div align="center">
+        <p>
+            不会吧，不会吧，不会真有人是内鬼吧？
+        </p>
+    </div>
+</footer>
 </html>
