@@ -453,8 +453,8 @@ class ClanBattle:
                 nik, health_before, finished+1, '尾余刀' if is_continue else '收尾刀'
             )
         else:
-            msg = '{}对boss造成了{:,}点伤害\n（今日第{}刀，{}）'.format(
-                nik, damage, finished+1, '剩余刀' if is_continue else '完整刀'
+            msg = '{}对boss造成了{:,}点伤害{}\n（今日第{}刀，{}）'.format(
+                nik, damage, '\n(就这？伤害还不到50万，不会吧不会吧？)' if damage <500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
             )
         status = BossStatus(
             group.boss_cycle,
@@ -970,7 +970,7 @@ class ClanBattle:
             return (membership.last_save_slot == today)
         if todaystatus:
             if membership.last_save_slot == today:
-                raise UserError('您今天已经存在SL记录了')
+                raise UserError('[CQ:at,qq='+str(qqid)+']今天已经存在SL记录了')
             membership.last_save_slot = today
 
             # 如果当前正在挑战，则取消挑战
@@ -985,7 +985,7 @@ class ClanBattle:
             ).execute()
         else:
             if membership.last_save_slot != today:
-                raise UserError('您今天没有SL记录')
+                raise UserError('[CQ:at,qq='+str(qqid)+']今天没有SL记录')
             membership.last_save_slot = 0
         membership.save()
 
@@ -1401,7 +1401,37 @@ class ClanBattle:
             )
             return f'公会战面板：\n{url}\n建议添加到浏览器收藏夹或桌面快捷方式'
         elif match_num == 16:  # SL
-            if len(cmd) == 2:
+            match=re.match(
+                r'^([sS][lL]) *(?:\[CQ:at,qq=(\d+)\])? *([\?\？])?', cmd)
+            if not match:
+                return
+            elif bool(match.group(3)):
+                if bool(match.group(2)):
+                    behalf = match.group(2) and int(match.group(2))
+                    sl_ed = self.save_slot(group_id, behalf, only_check=True)
+                else:
+                    sl_ed = self.save_slot(group_id, user_id, only_check=True)
+                if sl_ed:
+                    if bool(match.group(2)):
+                        return '[CQ:at,qq='+str(match.group(2))+']今日已使用SL'
+                    else:
+                        return '今日已使用SL'
+                else:
+                    if bool(match.group(2)):
+                        return '[CQ:at,qq='+str(match.group(2))+']今日未使用SL'
+                    else:
+                        return '今日未使用SL'
+            elif bool(match.group(2)):
+                behalf = match.group(2) and int(match.group(2))
+                try:
+                    self.save_slot(group_id, behalf)
+                except ClanBattleError as e:
+                    _logger.info('群聊 失败 {} {} {}'.format(
+                        behalf, group_id, cmd))
+                    return str(e)
+                _logger.info('群聊 成功 {} {} {}'.format(user_id, group_id, cmd))
+                return '[CQ:at,qq='+str(behalf)+']已记录SL'
+            else:
                 try:
                     self.save_slot(group_id, user_id)
                 except ClanBattleError as e:
@@ -1409,13 +1439,8 @@ class ClanBattle:
                         user_id, group_id, cmd))
                     return str(e)
                 _logger.info('群聊 成功 {} {} {}'.format(user_id, group_id, cmd))
-                return '已记录SL'
-            elif cmd[2:].strip() in ['?', '？']:
-                sl_ed = self.save_slot(group_id, user_id, only_check=True)
-                if sl_ed:
-                    return '今日已使用SL'
-                else:
-                    return '今日未使用SL'
+                return '[CQ:at,qq='+str(user_id)+']已记录SL'
+
         elif 20 <= match_num <= 25:
             if len(cmd) != 2:
                 return
