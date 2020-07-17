@@ -449,12 +449,12 @@ class ClanBattle:
 
         nik = user.nickname or user.qqid
         if defeat:
-            msg = '{}对boss造成了{:,}点伤害，击败了boss{}\n（今日第{}刀，{}）'.format(
-                nik, health_before,'\n(就这？伤害还不到50万，不会吧不会吧？)\n[CQ:image,file=jiuzhe2.jpg]' if health_before <500000 else '\n(会长，我们工会要没了！)\n[CQ:image,file=cancan.jpg]' if health_before > 1500000 else '', finished+1, '尾余刀' if is_continue else '收尾刀'
+            msg = '本刀id:{}\n{}对boss造成了{:,}点伤害，击败了boss{}\n（今日第{}刀，{}）'.format(
+                group.battle_id,nik, health_before,'\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if health_before <500000 else '\"(º Д º*)会长，工会要没辣！\n' if health_before > 1500000 else '', finished+1, '尾余刀' if is_continue else '收尾刀'
             )
         else:
-            msg = '{}对boss造成了{:,}点伤害{}\n（今日第{}刀，{}）'.format(
-                nik, damage, '\n(就这？伤害还不到50万，不会吧不会吧？)\n[CQ:image,file=jiuzhe2.jpg]' if damage <500000 else '\n(会长，我们工会要没了！)\n[CQ:image,file=cancan.jpg]' if damage > 1500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
+            msg = '本刀id:{}\n{}对boss造成了{:,}点伤害{}\n（今日第{}刀，{}）'.format(
+                group.battle_id,nik, damage, '\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if damage <500000 else '\n\"(º Д º*)会长，工会要没辣！\n' if damage > 1500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
             )
         status = BossStatus(
             group.boss_cycle,
@@ -474,6 +474,49 @@ class ClanBattle:
         return status
 
     def undo(self, group_id: Groupid, qqid: QQid) -> BossStatus:
+        """
+        rollback last challenge record.
+
+        Args:
+            group_id: group id
+            qqid: qqid of member who ask for the undo
+        """
+        group = Clan_group.get_or_none(group_id=group_id)
+        if group is None:
+            raise GroupNotExist
+        user = User.get_or_create(
+            qqid=qqid,
+            defaults={
+                'clan_group_id': group_id,
+            }
+        )[0]
+        last_challenge = self._get_group_previous_challenge(group)
+        if last_challenge is None:
+            raise GroupError('本群无出刀记录')
+        if (last_challenge.qqid != qqid) and (user.authority_group >= 100):
+            raise UserError('无权撤销')
+        group.boss_cycle = last_challenge.boss_cycle
+        group.boss_num = last_challenge.boss_num
+        group.boss_health = (last_challenge.boss_health_ramain
+                             + last_challenge.challenge_damage)
+        last_challenge.delete_instance()
+        group.save()
+
+        nik = self._get_nickname_by_qqid(last_challenge.qqid)
+        status = BossStatus(
+            group.boss_cycle,
+            group.boss_num,
+            group.boss_health,
+            0,
+            f'{nik}的出刀记录已被撤销',
+        )
+        self._boss_status[group_id].set_result(
+            (self._boss_data_dict(group), status.info)
+        )
+        self._boss_status[group_id] = asyncio.get_event_loop().create_future()
+        return status
+
+    def undo2(self, group_id: Groupid, qqid: QQid) -> BossStatus:
         """
         rollback last challenge record.
 
