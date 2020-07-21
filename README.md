@@ -1,11 +1,7 @@
-# yobot
+# yobot垃圾倾倒版
 
-本项目正在准备进入归档模式（archive）
+本项目为yobot的垃圾倾倒版
 
-[yobot](./about.md) 是为[公主连接](https://game.bilibili.com/pcr/)公会战设计的辅助机器人，能够帮助公会战管理者提供自动化管理服务。
+欢迎大家一起来倾倒垃圾代码
 
-yobot 提供了群聊、web 页面两套用户交互方式，具有操作便捷、通知及时、数据详细的特点。
-
-[源码](./src/client)
-
-[介绍](./documents/README.md)
+请谨慎食用，造成的任何损失概不负责。
