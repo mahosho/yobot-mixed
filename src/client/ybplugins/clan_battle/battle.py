@@ -149,6 +149,23 @@ class ClanBattle:
         except peewee.DoesNotExist:
             return None
 
+    def _get_group_previous_challenge_by_qqid(self, group: Clan_group, qqid: QQid):
+        Clan_challenge_alias = Clan_challenge.alias()
+        query = Clan_challenge.select().where(
+            Clan_challenge.cid == Clan_challenge_alias.select(
+                peewee.fn.MAX(Clan_challenge_alias.cid)
+            ).where(
+                Clan_challenge_alias.gid == group.group_id,
+                Clan_challenge_alias.bid == group.battle_id,
+                Clan_challenge_alias.qqid == qqid,
+            )
+        )
+        try:
+            return query.get()
+        except peewee.DoesNotExist:
+            return None
+
+
     async def _update_group_list_async(self):
         try:
             group_list = await self.api.get_group_list()
@@ -172,7 +189,7 @@ class ClanBattle:
         except Exception as e:
             _logger.exception('获取群成员列表错误'+str(type(e))+str(e))
             asyncio.ensure_future(self.api.send_group_msg(
-                group_id=group_id, message='获取群成员错误，这可能是缓存问题，请稍后再试'))
+                group_id=group_id, message='获取群成员错误，这可能是缓存问题，请联系维护组刷新容器缓存'))
             return []
         return group_member_list
 
@@ -450,11 +467,11 @@ class ClanBattle:
         nik = user.nickname or user.qqid
         if defeat:
             msg = '本刀id:{}\n{}对boss造成了{:,}点伤害，击败了boss{}\n（今日第{}刀，{}）'.format(
-                group.battle_id,nik, health_before,'\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if health_before <500000 else '\"(º Д º*)会长，工会要没辣！\n' if health_before > 1500000 else '', finished+1, '尾余刀' if is_continue else '收尾刀'
+                challenge.cid, nik, health_before, '\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if health_before <500000 else '\"(º Д º*)会长，工会要没辣！\n' if health_before > 1500000 else '', finished+1, '尾余刀' if is_continue else '收尾刀'
             )
         else:
             msg = '本刀id:{}\n{}对boss造成了{:,}点伤害{}\n（今日第{}刀，{}）'.format(
-                group.battle_id,nik, damage, '\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if damage <500000 else '\n\"(º Д º*)会长，工会要没辣！\n' if damage > 1500000 else '',finished+1,'剩余刀' if is_continue else '完整刀'
+                challenge.cid, nik, damage, '\n( ´ﾟωﾟ)？就这，我奶奶AUTO刀都比你高。' if damage <500000 else '\n\"(º Д º*)会长，工会要没辣！\n' if damage > 1500000 else '', finished+1,'剩余刀' if is_continue else '完整刀'
             )
         status = BossStatus(
             group.boss_cycle,
@@ -516,7 +533,7 @@ class ClanBattle:
         self._boss_status[group_id] = asyncio.get_event_loop().create_future()
         return status
 
-    def undo2(self, group_id: Groupid, qqid: QQid) -> BossStatus:
+    def undo2(self, group_id: Groupid, user_qq: QQid,qqid :QQid) -> BossStatus:
         """
         rollback last challenge record.
 
@@ -528,30 +545,26 @@ class ClanBattle:
         if group is None:
             raise GroupNotExist
         user = User.get_or_create(
-            qqid=qqid,
+            qqid=user_qq,
             defaults={
                 'clan_group_id': group_id,
             }
         )[0]
-        last_challenge = self._get_group_previous_challenge(group)
+        nik = self._get_nickname_by_qqid(qqid)
+        last_challenge = self._get_group_previous_challenge_by_qqid(group, qqid)
         if last_challenge is None:
-            raise GroupError('本群无出刀记录')
-        if (last_challenge.qqid != qqid) and (user.authority_group >= 100):
+            raise GroupError(f'{nik}在本群无出刀记录')
+        if (last_challenge.qqid != user_qq) and (user.authority_group >= 100):
             raise UserError('无权撤销')
-        group.boss_cycle = last_challenge.boss_cycle
-        group.boss_num = last_challenge.boss_num
-        group.boss_health = (last_challenge.boss_health_ramain
-                             + last_challenge.challenge_damage)
         last_challenge.delete_instance()
         group.save()
 
-        nik = self._get_nickname_by_qqid(last_challenge.qqid)
         status = BossStatus(
             group.boss_cycle,
             group.boss_num,
             group.boss_health,
             0,
-            f'{nik}的出刀记录已被撤销',
+            f'{nik}的出刀记录已被撤销\n指定撤销不会修改boss血量，请自行设置',
         )
         self._boss_status[group_id].set_result(
             (self._boss_data_dict(group), status.info)
@@ -1304,10 +1317,17 @@ class ClanBattle:
             _logger.info('群聊 成功 {} {} {}'.format(user_id, group_id, cmd))
             return str(boss_status)
         elif match_num == 6:  # 撤销
-            if cmd != '撤销':
+            match=re.match(
+                r'撤销 *(?:\[CQ:at,qq=(\d+)\])?',cmd
+            )
+            if not match:
                 return
             try:
-                boss_status = self.undo(group_id, user_id)
+                if(bool(match.group(1))):
+                    qqid = match.group(1);
+                    boss_status = self.undo2(group_id , user_id, qqid)
+                else:
+                    boss_status = self.undo(group_id, user_id)
             except ClanBattleError as e:
                 _logger.info('群聊 失败 {} {} {}'.format(user_id, group_id, cmd))
                 return str(e)
